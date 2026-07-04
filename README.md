@@ -27,7 +27,12 @@ Drop photos into `images/` (see `images/README.txt`) — optional, the page look
 
 ## A note on the music
 
-Background music is `audio/track.mp3` — currently "Spring On The Horizon" by HoliznaCC0, CC0-licensed (public domain, no attribution required; see `audio/README.txt` for the source) — **but this is a placeholder the user plans to swap for a different track.** It plays via a plain `<audio>` element (deliberately not routed through the Web Audio API — that caused a real "plays but silent" bug once already), with its volume swelling gently as she scrolls further into the page. It starts on her first tap/click/keypress — browsers block all audio from starting with zero interaction first, that's a hard rule in every modern browser, not a bug here. Swap the file any time (see `audio/README.txt`).
+Background music is "Nuvole Bianche" by Ludovico Einaudi, streamed live from **Spotify's official embed + iFrame API** (`SPOTIFY_TRACK_URI` near the top of `script.js`) — not a downloaded file. This is the same sanctioned mechanism as embedding a YouTube video; no copy of the track is hosted in this repo, which matters because it's a real commercial recording still under copyright, not something that can legally be redistributed as a file. The embed is visible (per Spotify's own embed guidelines) as a compact widget just under the "Press play" button, and stays in sync with the mini-player's play/pause button via the controller's `playback_update` events.
+
+Practical notes:
+- Non-Premium listeners (or anyone not logged into Spotify in that browser) get a 30-second preview loop. Full playback requires Spotify Premium, logged in, same browser.
+- It starts on her first tap/click/keypress — browsers block all audio from starting with zero interaction first, that's a hard rule in every modern browser, not a bug here.
+- Want a different song? Change `SPOTIFY_TRACK_URI` in `script.js` to another track's `spotify:track:...` URI (grab it from a track's Spotify share link), or ask to have it swapped back to a self-hosted royalty-free file instead.
 
 ## Hosting
 

@@ -360,27 +360,46 @@ Yours, from far away — for now.`,
   }
 
   /* ============================================================================
-     BACKGROUND MUSIC — "Spring On The Horizon" by HoliznaCC0 (CC0-licensed,
-     see audio/README.txt). Plays via the plain <audio> element directly —
-     no Web Audio API graph in between. That's a deliberate choice: routing
-     it through an AudioContext for a scroll-reactive filter effect sounded
-     clever, but the media element can keep advancing (decoding) even while
-     the AudioContext consuming its output silently sits "suspended" —
-     producing exactly the "nothing plays" symptom with no error to catch.
-     A direct <audio>.play() has no such extra failure mode; it's the same
-     simple approach virtually every site with background music actually
-     uses. Volume swells gently as she scrolls instead, no audio graph
-     required for that at all.
+     BACKGROUND MUSIC — "Nuvole Bianche" by Ludovico Einaudi, streamed live
+     from Spotify via their official embed + public iFrame API. No audio
+     file is downloaded or hosted here — this is the same mechanism as
+     embedding a YouTube video, fully sanctioned by Spotify for exactly this
+     use. Non-Premium listeners get a 30-second preview loop; Spotify
+     Premium (logged in, same browser) gets the full track.
 
      Browsers hard-block all audio from starting with zero user interaction
      first — there's no way around that, by design, in every modern browser.
      So this starts on her first tap/click/keypress. The mini-player button
-     is the manual play/pause toggle once it's going.
+     is the manual play/pause toggle once it's going, kept in sync with the
+     Spotify controller's own playback_update events (in case she uses the
+     visible Spotify widget's own controls instead of the mini-player).
      ============================================================================ */
+  const SPOTIFY_TRACK_URI = 'spotify:track:3weNRklVDqb4Rr5MhKBR3D'; // Nuvole Bianche, Una Mattina (2004)
+
+  let spotifyController = null;
   let musicStarted = false;
   let musicPlaying = false;
-  const BASE_VOLUME = 0.55;
-  const MAX_VOLUME = 0.85;
+  let pendingPlayIntent = false; // true if she interacted before the controller finished loading
+
+  // Spotify's iFrame API loader script calls this global function once it's
+  // ready. Must be defined before that script tag runs — see index.html,
+  // where this script.js is loaded first specifically so this exists in
+  // time.
+  window.onSpotifyIframeApiReady = function (IFrameAPI) {
+    const element = document.getElementById('spotify-embed');
+    if (!element) return;
+    IFrameAPI.createController(element, { uri: SPOTIFY_TRACK_URI, width: 320, height: 152 }, function (controller) {
+      spotifyController = controller;
+      controller.addListener('playback_update', (e) => {
+        musicPlaying = !e.data.isPaused;
+        setMusicPlayingState(musicPlaying);
+      });
+      if (pendingPlayIntent) {
+        pendingPlayIntent = false;
+        controller.play();
+      }
+    });
+  };
 
   function startMusic() {
     startAmbience();
@@ -400,59 +419,28 @@ Yours, from far away — for now.`,
   }
 
   function startAmbience() {
-    const audioEl = document.getElementById('bg-audio');
-    if (!audioEl) return;
-
-    audioEl.volume = BASE_VOLUME;
-    const playPromise = audioEl.play();
-    if (playPromise && playPromise.then) {
-      playPromise.then(() => {
-        musicStarted = true;
-        musicPlaying = true;
-        setMusicPlayingState(true);
-        updateAmbienceForScroll();
-      }).catch(() => {
-        // Blocked — the gesture that called this should normally prevent
-        // this, but if it happens there's nothing more to do than leave
-        // the mini-player showing "not playing" so she can tap it herself.
-        setMusicPlayingState(false);
-      });
+    musicStarted = true;
+    if (!spotifyController) {
+      // The iFrame API/controller may still be loading — remember the
+      // intent and fire it the moment onSpotifyIframeApiReady finishes.
+      pendingPlayIntent = true;
+      return;
     }
+    spotifyController.play();
   }
 
   function pauseAmbience() {
-    const audioEl = document.getElementById('bg-audio');
-    if (!audioEl || !musicPlaying) return;
-    audioEl.pause();
-    musicPlaying = false;
-    setMusicPlayingState(false);
+    if (!spotifyController) return;
+    spotifyController.pause();
   }
 
   function resumeAmbience() {
-    const audioEl = document.getElementById('bg-audio');
-    if (!audioEl || musicPlaying) return;
-    audioEl.play().then(() => {
-      musicPlaying = true;
-      setMusicPlayingState(true);
-    }).catch(() => {});
-  }
-
-  // Swells the volume gently as she scrolls further into the page, so it's
-  // not just a flat loop — the "ambience as she scrolls" bit, done with
-  // nothing more than audioEl.volume (no separate audio graph to fail).
-  function updateAmbienceForScroll() {
-    const audioEl = document.getElementById('bg-audio');
-    if (!audioEl || !musicPlaying) return;
-    const doc = document.documentElement;
-    const maxScroll = Math.max(1, doc.scrollHeight - window.innerHeight);
-    const progress = Math.min(1, Math.max(0, window.scrollY / maxScroll));
-    audioEl.volume = BASE_VOLUME + progress * (MAX_VOLUME - BASE_VOLUME);
+    if (!spotifyController) { startAmbience(); return; }
+    spotifyController.resume();
   }
 
   function setupBackgroundMusic() {
     const miniBtn = document.getElementById('mini-player-btn');
-
-    window.addEventListener('scroll', updateAmbienceForScroll, { passive: true });
 
     if (miniBtn) {
       miniBtn.addEventListener('click', () => {

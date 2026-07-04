@@ -223,6 +223,18 @@ body {
 .press-play-icon { font-size: 0.8em; transition: transform 0.2s ease; }
 .press-play.is-playing .press-play-icon { transform: scale(0.9); }
 
+/* Spotify's own embed widget — deliberately kept visible (not hidden), per
+   their embed guidelines, but small and tucked under the custom Press Play
+   button so it reads as "the real player, if you want it" rather than the
+   page's primary control. */
+.spotify-embed-wrap {
+  margin: 1.5rem auto 0;
+  max-width: 320px;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(42, 26, 18, 0.12);
+}
+
 .cover-scroll-cue {
   position: absolute;
   bottom: clamp(1.5rem, 4vh, 2.5rem);

@@ -16,16 +16,6 @@
 </head>
 <body>
 
-<!-- Background music: "Spring On The Horizon" by HoliznaCC0, CC0-licensed
-     (see audio/README.txt for the source/license). Volume swells gently as
-     she scrolls further into the page. It starts on her first tap/click/
-     keypress — browsers block all audio from starting with zero real
-     interaction first, so that's the earliest it honestly can. The
-     mini-player below is the play/pause control once it's going. -->
-<audio id="bg-audio" loop preload="auto">
-  <source src="audio/track.mp3" type="audio/mpeg">
-</audio>
-
 <!-- Ambient confetti, drifting continuously behind everything — the same
      canvas-based confetti-js effect used in birthday-counter/. -->
 <canvas id="confetti-canvas" aria-hidden="true"></canvas>
@@ -53,6 +43,20 @@
       <span class="press-play-icon" id="press-play-icon" aria-hidden="true">&#9654;</span>
       <span id="press-play-label">Press play</span>
     </button>
+
+    <!-- Background music: "Nuvole Bianche" by Ludovico Einaudi, played via
+         Spotify's official embed (open.spotify.com/embed) through their
+         public iFrame API — not a downloaded file. This streams directly
+         from Spotify, same as embedding a YouTube video; no copy of the
+         track is hosted here. Non-Premium listeners get a 30-second preview
+         loop; anyone logged into Spotify Premium in that browser gets the
+         full track. It starts on her first tap/click/keypress — browsers
+         block all audio from starting with zero real interaction first.
+         The mini-player further down is the play/pause control once it's
+         going, kept in sync with this controller. -->
+    <div class="spotify-embed-wrap">
+      <div id="spotify-embed"></div>
+    </div>
   </div>
 
   <div class="cover-scroll-cue" aria-hidden="true">
@@ -158,5 +162,9 @@
 <!-- confetti-js by Daniel Lundin (MIT) — the same library birthday-counter/ uses -->
 <script src="confetti.min.js"></script>
 <script src="script.js"></script>
+<!-- Spotify's official iFrame API loader. Must load after script.js, which
+     defines window.onSpotifyIframeApiReady synchronously — this script
+     calls that function once it's ready, so the order here matters. -->
+<script src="https://open.spotify.com/embed/iframe-api/v1"></script>
 </body>
 </html>
