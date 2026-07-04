@@ -286,13 +286,23 @@ const CONFIG = {
      ad-blocker rules. Volume swells gently as she scrolls further into the
      page instead, no audio graph required for that at all.
 
-     Browsers hard-block all audio from starting with zero user interaction
-     first — there's no way around that, by design, in every modern browser.
-     So this starts on her first tap/click/keypress. The mini-player button
-     is the manual play/pause toggle once it's going.
+     Browsers hard-block AUDIBLE audio from starting with zero user
+     interaction first — there's no way around that, by design, in every
+     modern browser. So the actual sound starts on her first tap/click/
+     keypress. The mini-player button is the manual play/pause toggle once
+     it's going.
 
-     This exact block is unchanged from the previously verified-working
-     version.
+     But browsers do NOT block MUTED autoplay — that's exempt, precisely
+     because it can't bother anyone. Mobile browsers also specifically
+     defer downloading gesture-gated media until the gesture happens (to
+     avoid wasting data on audio that might never play), which is what
+     made the real sound take several seconds to arrive after her first
+     tap even once the file itself was made smaller: the download simply
+     hadn't started yet. So this primes a muted, silent play() the moment
+     the page loads (allowed everywhere, no gesture needed) — which also
+     kicks off the real download immediately, well before she's likely to
+     have tapped anything — and her first gesture just unmutes it. No
+     re-buffering, no delay.
      ============================================================================ */
   let musicStarted = false;
   let musicPlaying = false;
@@ -316,11 +326,38 @@ const CONFIG = {
     if (pressLabel) pressLabel.textContent = isPlaying ? 'Now playing' : 'Press play';
   }
 
+  // Fires on page load, before any interaction — starts a silent, muted
+  // play() so the browser has no reason to defer the download. Failing
+  // silently here is fine: if even muted autoplay is blocked (rare, some
+  // very strict embedded webviews), startAmbience() below still falls
+  // back to a normal play() call on her first real gesture.
+  function primeAmbience() {
+    const audioEl = document.getElementById('bg-audio');
+    if (!audioEl) return;
+    audioEl.muted = true;
+    audioEl.volume = BASE_VOLUME;
+    const playPromise = audioEl.play();
+    if (playPromise && playPromise.catch) playPromise.catch(() => {});
+  }
+
   function startAmbience() {
     const audioEl = document.getElementById('bg-audio');
     if (!audioEl) return;
 
     audioEl.volume = BASE_VOLUME;
+
+    if (!audioEl.paused && audioEl.muted) {
+      // Already playing silently since page load (see primeAmbience) —
+      // just make it audible, no further buffering needed.
+      audioEl.muted = false;
+      musicStarted = true;
+      musicPlaying = true;
+      setMusicPlayingState(true);
+      updateAmbienceForScroll();
+      return;
+    }
+
+    audioEl.muted = false;
     const playPromise = audioEl.play();
     if (playPromise && playPromise.then) {
       playPromise.then(() => {
@@ -363,6 +400,8 @@ const CONFIG = {
   function setupBackgroundMusic() {
     const miniBtn = document.getElementById('mini-player-btn');
 
+    primeAmbience();
+
     window.addEventListener('scroll', updateAmbienceForScroll, { passive: true });
 
     if (miniBtn) {
@@ -380,8 +419,17 @@ const CONFIG = {
     firstInteractionEvents.forEach((evt) => window.addEventListener(evt, onFirstInteraction, { passive: true }));
 
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden) pauseAmbience();
-      else if (musicStarted) resumeAmbience();
+      const audioEl = document.getElementById('bg-audio');
+      if (document.hidden) {
+        pauseAmbience();
+        // Also pause the muted priming playback if she hasn't interacted
+        // yet, so a backgrounded tab isn't silently buffering/looping.
+        if (audioEl && audioEl.muted && !audioEl.paused) audioEl.pause();
+      } else if (musicStarted) {
+        resumeAmbience();
+      } else if (audioEl && audioEl.muted && audioEl.paused) {
+        primeAmbience();
+      }
     });
   }
 
