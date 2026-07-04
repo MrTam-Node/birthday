@@ -102,7 +102,7 @@ const CONFIG = {
     burstConfetti(candleEl);
     const msg = document.getElementById('wish-message');
     if (msg) {
-      msg.textContent = 'Wish made. ✨';
+      msg.textContent = "Wish made. Here's to thirty and all the beautiful things to come. ✨";
       msg.classList.add('visible');
     }
   }
