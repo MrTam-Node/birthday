@@ -329,7 +329,7 @@ const CONFIG = {
       miniBtn.setAttribute('aria-label', isPlaying ? 'Pause music' : 'Play music');
     }
     if (pressBtn) pressBtn.classList.toggle('is-playing', isPlaying);
-    if (pressLabel) pressLabel.textContent = isPlaying ? 'Now playing' : 'Press play';
+    if (pressLabel) pressLabel.textContent = isPlaying ? 'Now playing' : 'Click here';
   }
 
   // Fires on page load, before any interaction — starts a silent, muted
