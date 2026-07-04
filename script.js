@@ -34,7 +34,7 @@ const CONFIG = {
   SURPRISE_LINE: "I hope tonight reminds you just how loved you are, even from miles away.",
 
   // Closing — hints the birthday isn't over yet.
-  CLOSING_LINE: "This isn't the last surprise… ♥",
+  CLOSING_LINE: "This isn't the last surprise… ❤️",
   CLOSING_SUB: "Happy 30th, my love."
 };
 
@@ -147,7 +147,13 @@ const CONFIG = {
     if (closingSub) closingSub.textContent = CONFIG.CLOSING_SUB;
   }
 
-  /* ---------------------------- Gentle fade-in as each beat scrolls into view ---------------------------- */
+  /* ---------------------------- Fade-in only once the previous beat is fully scrolled past ---------------------------- */
+  // rootMargin shrinks the effective viewport down to just its top 25% —
+  // so a section only counts as "in view" once it's scrolled up into that
+  // top sliver, which (since every section is at least one full viewport
+  // tall) only happens once the section before it has scrolled fully out
+  // of view. That's what gives the "opens up to the next one" pacing,
+  // rather than fading in as soon as it merely starts peeking into view.
   function setupScreenReveals() {
     const beats = document.querySelectorAll('.track, .outro');
     if (!('IntersectionObserver' in window)) {
@@ -161,7 +167,7 @@ const CONFIG = {
           observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.3 });
+    }, { threshold: 0, rootMargin: '0px 0px -75% 0px' });
     beats.forEach((el) => observer.observe(el));
   }
 
