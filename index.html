@@ -26,8 +26,9 @@
   <source src="audio/track.mp3" type="audio/mpeg">
 </audio>
 
-<!-- Ambient confetti, drifting continuously behind everything -->
-<div class="confetti-ambient" id="confetti-ambient" aria-hidden="true"></div>
+<!-- Ambient confetti, drifting continuously behind everything — the same
+     canvas-based confetti-js effect used in birthday-counter/. -->
+<canvas id="confetti-canvas" aria-hidden="true"></canvas>
 
 <!-- ============================= COVER / HERO ============================= -->
 <header class="cover" id="cover">
@@ -155,6 +156,8 @@
   </div>
 </div>
 
+<!-- confetti-js by Daniel Lundin (MIT) — the same library birthday-counter/ uses -->
+<script src="confetti.min.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

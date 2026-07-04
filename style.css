@@ -776,42 +776,21 @@ html { scroll-behavior: smooth; }
 .mini-player-btn:disabled:hover { transform: none; background: rgba(42, 26, 18, 0.06); }
 
 /* ============================================================================
-   AMBIENT CONFETTI — drifts continuously behind everything, low density so
-   it reads as festive texture against the white background rather than
-   competing with the content on top of it.
+   AMBIENT CONFETTI — the same confetti-js canvas effect birthday-counter/
+   uses: a full-viewport canvas, continuously falling pieces, rendered and
+   driven entirely by confetti.min.js (see script.js for the ConfettiGenerator
+   call). This just positions and layers the canvas itself.
    ============================================================================ */
-.confetti-ambient {
+#confetti-canvas {
   position: fixed;
   inset: 0;
-  /* z-index: 0, not a positive value — this needs to paint at the same
-     "layer" as the rest of the page's normal-flow content so DOM order
-     (this sits first, before .cover/main) puts it behind everything, not
-     a positive z-index which would float it above all page content
-     regardless of source order. */
+  /* z-index: 0, not positive — needs to paint at the same "layer" as the
+     rest of the page's normal-flow content so DOM order (this sits first,
+     before .cover/main) puts it behind everything else on the page. */
   z-index: 0;
-  overflow: hidden;
   pointer-events: none;
 }
 
-.confetti-ambient-piece {
-  position: absolute;
-  top: -8vh;
-  opacity: 0;
-  border-radius: 2px;
-  animation-name: confettiDrift;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  will-change: transform, opacity;
-}
-
-@keyframes confettiDrift {
-  0%   { transform: translate(0, 0) rotate(0deg); opacity: 0; }
-  8%   { opacity: 0.85; }
-  50%  { transform: translate(var(--drift-x, 30px), 60vh) rotate(180deg); }
-  92%  { opacity: 0.7; }
-  100% { transform: translate(calc(var(--drift-x, 30px) * -1), 118vh) rotate(360deg); opacity: 0; }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .confetti-ambient { display: none; }
+  #confetti-canvas { display: none; }
 }

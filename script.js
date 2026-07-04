@@ -152,33 +152,32 @@ Yours, from far away — for now.`,
     setupVoiceMemo();
     setupMiniPlayer();
     setupBackgroundMusic();
-    renderAmbientConfetti();
+    setupAmbientConfetti();
   }
 
   /* ---------------------------- Ambient confetti ---------------------------- */
-  function renderAmbientConfetti() {
-    const layer = document.getElementById('confetti-ambient');
-    if (!layer) return;
+  // The same confetti-js (by Daniel Lundin, MIT) canvas effect used in
+  // birthday-counter/ — continuously falling pieces on a full-viewport
+  // canvas, driven entirely by confetti.min.js's ConfettiGenerator.
+  function setupAmbientConfetti() {
+    const canvas = document.getElementById('confetti-canvas');
+    if (!canvas || !window.ConfettiGenerator) return;
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    const COLORS = ['#ff6b5e', '#ffb347', '#1fae6b', '#ffd68a', '#ff9d8f'];
-    const PIECE_COUNT = 26;
+    const confetti = new window.ConfettiGenerator({
+      target: 'confetti-canvas',
+      max: 60,
+      size: 1,
+      // Tinted to match the page's own palette (coral, tangerine, mint,
+      // gold) instead of the library's default purple/pink/cyan.
+      colors: [[255, 107, 94], [255, 179, 71], [31, 174, 107], [255, 214, 138]]
+    });
+    confetti.render();
 
-    for (let i = 0; i < PIECE_COUNT; i++) {
-      const piece = document.createElement('span');
-      piece.className = 'confetti-ambient-piece';
-      const size = 5 + Math.random() * 5;
-      const isCircle = Math.random() > 0.5;
-      piece.style.left = Math.random() * 100 + '%';
-      piece.style.width = size + 'px';
-      piece.style.height = size * (isCircle ? 1 : 2.2) + 'px';
-      piece.style.borderRadius = isCircle ? '50%' : '2px';
-      piece.style.background = COLORS[Math.floor(Math.random() * COLORS.length)];
-      piece.style.setProperty('--drift-x', (Math.random() * 80 - 40) + 'px');
-      piece.style.animationDuration = (10 + Math.random() * 9) + 's';
-      piece.style.animationDelay = (Math.random() * -18) + 's';
-      layer.appendChild(piece);
-    }
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
   }
 
   /* ---------------------------- Cover ---------------------------- */
