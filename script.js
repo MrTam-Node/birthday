@@ -15,6 +15,9 @@ const CONFIG = {
   // Her name — shown on the cover and worked into the personal message.
   HER_NAME: 'Nina',
 
+  // Shown just below the cover title.
+  COVER_TAGLINE: '30 looks beautiful on you.',
+
   // Personal message — a few short lines, kept intimate rather than long.
   MESSAGE_LINES: [
     "Nina, today of all days, I wish I could be the one hugging you right now.",
@@ -142,6 +145,9 @@ const CONFIG = {
   function renderContent() {
     const coverTitle = document.getElementById('cover-title');
     if (coverTitle) coverTitle.innerHTML = `Happy 30th Birthday, ${escapeHTML(CONFIG.HER_NAME)} &#10084;&#65039;`;
+
+    const coverTagline = document.getElementById('cover-tagline');
+    if (coverTagline) coverTagline.textContent = CONFIG.COVER_TAGLINE;
 
     const message = document.getElementById('message-text');
     if (message) message.innerHTML = CONFIG.MESSAGE_LINES.map(escapeHTML).join('<br><br>');
