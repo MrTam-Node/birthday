@@ -134,7 +134,7 @@ Yours, from far away — for now.`,
 (function () {
   'use strict';
 
-  const CANDLE_COUNT = 5;
+  const CANDLE_COUNT = 1;
   let candlesRemaining = CANDLE_COUNT;
 
   document.addEventListener('DOMContentLoaded', init);
