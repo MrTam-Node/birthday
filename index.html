@@ -12,6 +12,13 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+<!-- Starts downloading the background track the instant the HTML parser
+     hits this line — before any JS runs, and completely unrelated to
+     autoplay/gesture policy (it's just a resource fetch, not playback).
+     By the time she's had any chance to tap anything, this should already
+     be sitting in the browser's cache. -->
+<link rel="preload" href="audio/track.mp3" as="audio">
+
 <link rel="stylesheet" href="style.css">
 </head>
 <body>

@@ -49,6 +49,12 @@ const CONFIG = {
 (function () {
   'use strict';
 
+  // Fires immediately, not waiting for DOMContentLoaded — a redundant
+  // backup for the <link rel="preload"> in <head>, in case that hint
+  // isn't honored on some browser. A plain fetch() is never subject to
+  // autoplay/gesture policy, so this warms the HTTP cache regardless.
+  fetch('audio/track.mp3').catch(() => {});
+
   document.addEventListener('DOMContentLoaded', init);
 
   const CANDLE_COUNT = 1;
