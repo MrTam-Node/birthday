@@ -1,0 +1,817 @@
+/* ============================================================================
+   A PLAYLIST FOR YOU — birthday mixtape microsite
+   ----------------------------------------------------------------------------
+   The whole page reads as a phone "now playing" screen: a cover, a tracklist,
+   and a persistent mini-player at the bottom that's the real music control.
+   Clean white canvas with a warm coral→tangerine gradient as the one hero
+   accent, mint used only as a small "live" pulse.
+   ============================================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+img { max-width: 100%; display: block; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+button { font: inherit; }
+h1, h2, h3, p { margin: 0; }
+
+:root {
+  --ink: #ffffff;
+  --ink-soft: #fff2e6;
+  --ink-softer: #ffe4cc;
+  --line: rgba(42, 26, 18, 0.12);
+
+  --coral: #ff6b5e;
+  --coral-deep: #e14f42;
+  --tangerine: #ffb347;
+  --mint: #1fae6b;
+
+  --paper: #2a1a12;
+  --text-dim: rgba(42, 26, 18, 0.66);
+  --text-dimmer: rgba(42, 26, 18, 0.42);
+
+  --gradient-warm: linear-gradient(135deg, var(--coral), var(--tangerine));
+
+  --font-display: 'Space Grotesk', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --max-width: 720px;
+  --player-height: 78px;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--paper);
+  background: var(--ink);
+  overflow-x: hidden;
+  /* Reserves room for the fixed mini-player so it never covers the outro */
+  padding-bottom: var(--player-height);
+}
+
+:focus-visible {
+  outline: 2px solid var(--tangerine);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+.btn {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.98rem;
+  letter-spacing: 0.01em;
+  padding: 0.85em 1.9em;
+  border-radius: 999px;
+  border: none;
+  background: var(--gradient-warm);
+  color: #241016;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 8px 22px rgba(255, 107, 94, 0.28);
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(255, 107, 94, 0.38); }
+.btn:active { transform: translateY(0); }
+
+.btn-ghost {
+  background: transparent;
+  border: 1.5px solid rgba(42, 26, 18, 0.28);
+  color: var(--paper);
+  box-shadow: none;
+}
+.btn-ghost:hover { border-color: var(--tangerine); box-shadow: none; background: rgba(255, 179, 71, 0.08); }
+
+/* ============================================================================
+   COVER / HERO
+   ============================================================================ */
+.cover {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: clamp(1.5rem, 5vh, 3rem) 1.25rem clamp(3.5rem, 8vh, 5rem);
+  overflow: hidden;
+  /* No opaque fill here (on purpose) — the ambient confetti layer sits
+     behind this in paint order, and needs the transparent gaps between
+     these gradients to actually be visible through it. */
+  background:
+    radial-gradient(ellipse at 50% -10%, rgba(255, 107, 94, 0.22), transparent 55%),
+    radial-gradient(ellipse at 90% 110%, rgba(255, 179, 71, 0.14), transparent 50%);
+}
+
+.cover-art {
+  position: absolute;
+  top: 8%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(340px, 70vw);
+  height: min(340px, 70vw);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.cover-art-glow {
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  background: var(--gradient-warm);
+  filter: blur(2px);
+  opacity: 0.9;
+  animation: coverBreathe 7s ease-in-out infinite;
+}
+
+@keyframes coverBreathe {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.05); opacity: 1; }
+}
+
+.cover-art-rings {
+  position: absolute;
+  inset: 0;
+}
+.cover-art-rings span {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(42, 26, 18, 0.14);
+}
+.cover-art-rings span:nth-child(1) { inset: 0; }
+.cover-art-rings span:nth-child(2) { inset: 6%; border-color: rgba(42, 26, 18, 0.1); }
+.cover-art-rings span:nth-child(3) { inset: -6%; border-color: rgba(42, 26, 18, 0.07); }
+
+.cover-content {
+  position: relative;
+  z-index: 1;
+  max-width: 560px;
+  margin-top: min(230px, 46vw);
+}
+
+.live-clock {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  background: rgba(42, 26, 18, 0.06);
+  border: 1px solid var(--line);
+  padding: 0.45em 1em;
+  border-radius: 999px;
+  margin-bottom: 1.5rem;
+}
+.live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--mint);
+  box-shadow: 0 0 8px 2px rgba(110, 231, 183, 0.6);
+  animation: liveDotPulse 1.8s ease-in-out infinite;
+}
+@keyframes liveDotPulse {
+  0%, 100% { opacity: 0.5; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+.cover-eyebrow {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  font-size: 0.72rem;
+  color: var(--tangerine);
+  font-weight: 600;
+  margin-bottom: 0.7rem;
+}
+
+.cover-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.3rem, 7vw, 3.8rem);
+  line-height: 1.08;
+  color: var(--paper);
+  margin-bottom: 1rem;
+  text-wrap: balance;
+}
+
+.cover-tagline {
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  color: var(--text-dim);
+  max-width: 42ch;
+  margin: 0 auto 2.25rem;
+}
+
+.press-play {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65em;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  padding: 0.95em 2.2em;
+  border-radius: 999px;
+  border: none;
+  background: var(--gradient-warm);
+  color: #241016;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(255, 107, 94, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.press-play:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 14px 36px rgba(255, 107, 94, 0.45); }
+.press-play:active { transform: translateY(0) scale(0.99); }
+.press-play-icon { font-size: 0.8em; transition: transform 0.2s ease; }
+.press-play.is-playing .press-play-icon { transform: scale(0.9); }
+
+.cover-scroll-cue {
+  position: absolute;
+  bottom: clamp(1.5rem, 4vh, 2.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dimmer);
+}
+.cover-scroll-line {
+  width: 1px;
+  height: 30px;
+  background: linear-gradient(to bottom, transparent, var(--tangerine));
+  animation: scrollPulse 1.8s ease-in-out infinite;
+}
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.9; }
+}
+
+/* ============================================================================
+   TRACK SECTIONS — shared layout
+   ============================================================================ */
+.track {
+  position: relative;
+  padding: clamp(3.5rem, 9vw, 6rem) 1.25rem;
+  border-top: 1px solid var(--line);
+}
+.track:nth-of-type(even) { background: rgba(42, 26, 18, 0.02); }
+
+.track-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  text-align: center;
+}
+.track-inner-wide { max-width: 920px; }
+
+.track-kicker {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--tangerine);
+  margin-bottom: 0.8rem;
+}
+
+.track-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.8rem, 4.2vw, 2.6rem);
+  color: var(--paper);
+  margin-bottom: 0.6rem;
+}
+
+.track-lede {
+  font-size: clamp(0.98rem, 1.6vw, 1.08rem);
+  color: var(--text-dim);
+  max-width: 46ch;
+  margin: 0 auto 2.5rem;
+}
+
+/* ============================================================================
+   TRACK 01 — MAKE A WISH (cake + candles)
+   ============================================================================ */
+.cake-wrap {
+  position: relative;
+  width: min(300px, 78vw);
+  margin: clamp(4.5rem, 9vh, 5.5rem) auto 1.75rem;
+}
+
+.candles {
+  position: absolute;
+  top: -56px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: clamp(10px, 3vw, 18px);
+  z-index: 2;
+}
+
+.candle {
+  position: relative;
+  width: 12px;
+  height: 54px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  -webkit-tap-highlight-color: transparent;
+}
+.candle::before {
+  content: '';
+  position: absolute;
+  inset: -14px -14px;
+}
+.candle .wax {
+  width: 12px;
+  height: 40px;
+  background: repeating-linear-gradient(180deg, var(--coral) 0 7px, var(--tangerine) 7px 14px);
+  border-radius: 4px;
+}
+.candle .wick {
+  width: 2px;
+  height: 7px;
+  background: #3a2a20;
+  margin-bottom: -1px;
+}
+.candle .flame {
+  position: relative;
+  width: 11px;
+  height: 18px;
+  border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+  background: radial-gradient(circle at 50% 30%, #fff2c8, #ffb347 55%, #ff6b5e 100%);
+  box-shadow: 0 0 14px rgba(255, 179, 71, 0.75);
+  margin-bottom: 2px;
+  transform-origin: bottom center;
+  animation: flicker 1.2s ease-in-out infinite;
+}
+@keyframes flicker {
+  0%, 100% { transform: scaleY(1) rotate(-2deg); }
+  50% { transform: scaleY(1.08) rotate(2deg); }
+}
+.candle.out .flame { opacity: 0; transform: scaleY(0.15) translateY(6px); animation: none; }
+.candle.out .wick::after,
+.candle.out .wick::before {
+  content: '';
+  position: absolute;
+  bottom: 7px;
+  left: 50%;
+  width: 4px;
+  height: 12px;
+  background: rgba(42, 26, 18, 0.4);
+  border-radius: 4px;
+  filter: blur(1.5px);
+  opacity: 0;
+}
+.candle.out .wick::after { animation: smokeWisp 1.3s ease-out 0.05s forwards; }
+.candle.out .wick::before { animation: smokeWisp 1.3s ease-out 0.25s forwards; }
+@keyframes smokeWisp {
+  0% { opacity: 0.6; transform: translate(-50%, 0) scaleY(1); }
+  100% { opacity: 0; transform: translate(-65%, -40px) scaleY(2); }
+}
+
+.cake { position: relative; width: 100%; }
+.cake-tier {
+  position: relative;
+  border-radius: 12px 12px 5px 5px;
+  background: linear-gradient(180deg, var(--ink-softer), var(--ink-soft));
+  border: 1px solid var(--line);
+}
+.cake-tier-top { height: 44px; width: 70%; margin: 0 auto; }
+.cake-tier-bottom { height: 58px; width: 100%; margin-top: -3px; }
+.cake-icing {
+  position: absolute;
+  top: -8px; left: 0; right: 0;
+  height: 12px;
+  background: repeating-linear-gradient(90deg, var(--coral) 0 12px, var(--tangerine) 12px 24px);
+  border-radius: 12px 12px 0 0;
+  opacity: 0.85;
+}
+.cake-plate {
+  height: 10px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, var(--tangerine), var(--coral-deep));
+  margin-top: 6px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+}
+
+.confetti-stage { position: absolute; inset: -40px; pointer-events: none; z-index: 3; overflow: visible; }
+.confetti-piece {
+  position: absolute;
+  border-radius: 2px;
+  animation: confettiBurst 1.1s cubic-bezier(0.2, 0.7, 0.4, 1) forwards;
+}
+@keyframes confettiBurst {
+  0% { transform: translate(0,0) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); opacity: 0; }
+}
+
+.track-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.85rem;
+  margin-bottom: 0.75rem;
+}
+
+.mic-blow-btn { display: inline-flex; align-items: center; gap: 0.55em; }
+.mic-level-bar {
+  display: inline-block;
+  width: 40px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(42, 26, 18, 0.15);
+  overflow: hidden;
+  vertical-align: middle;
+}
+.mic-level-fill { display: block; height: 100%; width: 0%; background: var(--tangerine); transition: width 0.08s linear; }
+.mic-blow-btn.listening { animation: micPulse 1.6s ease-in-out infinite; }
+@keyframes micPulse { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.25); } }
+.mic-hint { margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-dimmer); }
+
+.wish-message {
+  margin-top: 1.25rem;
+  min-height: 1.6em;
+  color: var(--tangerine);
+  font-family: var(--font-display);
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.wish-message.visible { opacity: 1; transform: translateY(0); }
+
+/* ============================================================================
+   TRACK 04 — VOICE MEMO (the love letter)
+   ============================================================================ */
+.voice-memo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  width: 100%;
+  max-width: 420px;
+  padding: 1rem 1.4rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--ink-soft);
+  color: var(--paper);
+  cursor: pointer;
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+.voice-memo:hover { border-color: rgba(255, 179, 71, 0.4); }
+
+.voice-memo-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--gradient-warm);
+  color: #241016;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  transition: transform 0.2s ease;
+}
+.voice-memo.expanded .voice-memo-icon { transform: scale(0.92); }
+
+.voice-memo-wave {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 24px;
+}
+.voice-memo-wave span {
+  width: 3px;
+  border-radius: 2px;
+  background: rgba(42, 26, 18, 0.3);
+  height: 40%;
+  transition: background 0.3s ease;
+}
+.voice-memo-wave span:nth-child(1) { height: 35%; }
+.voice-memo-wave span:nth-child(2) { height: 70%; }
+.voice-memo-wave span:nth-child(3) { height: 50%; }
+.voice-memo-wave span:nth-child(4) { height: 90%; }
+.voice-memo-wave span:nth-child(5) { height: 45%; }
+.voice-memo-wave span:nth-child(6) { height: 75%; }
+.voice-memo-wave span:nth-child(7) { height: 55%; }
+.voice-memo-wave span:nth-child(8) { height: 30%; }
+
+.voice-memo.expanded .voice-memo-wave span {
+  background: var(--tangerine);
+  animation: waveDance 0.9s ease-in-out infinite;
+}
+.voice-memo.expanded .voice-memo-wave span:nth-child(2n) { animation-delay: 0.15s; }
+.voice-memo.expanded .voice-memo-wave span:nth-child(3n) { animation-delay: 0.3s; }
+@keyframes waveDance {
+  0%, 100% { transform: scaleY(0.6); }
+  50% { transform: scaleY(1); }
+}
+
+.voice-memo-duration {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
+  color: var(--text-dimmer);
+}
+
+.voice-memo-transcript {
+  max-width: 560px;
+  margin: 1.5rem auto 0;
+  text-align: left;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.7s ease, opacity 0.5s ease, padding 0.7s ease;
+  border-radius: 18px;
+  background: var(--ink-soft);
+  border: 1px solid var(--line);
+}
+.voice-memo-transcript.revealed {
+  max-height: 900px;
+  opacity: 1;
+  padding: 1.75rem clamp(1.25rem, 4vw, 2.25rem);
+}
+.transcript-label {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.7rem;
+  color: var(--tangerine);
+  margin-bottom: 0.9rem;
+}
+.transcript-body p {
+  color: var(--paper);
+  font-size: 1.02rem;
+  line-height: 1.7;
+  margin-bottom: 1.1rem;
+}
+.transcript-body p:last-child { margin-bottom: 0; }
+
+/* ============================================================================
+   TRACK 05 — THE ALBUM BOOKLET (photos)
+   ============================================================================ */
+.booklet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.1rem;
+}
+
+.booklet-photo {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--ink-soft);
+  border: 1px solid var(--line);
+  aspect-ratio: 4 / 5;
+}
+.booklet-photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.booklet-photo-fallback {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, var(--ink-softer), var(--ink-soft));
+  font-size: 1.6rem;
+  color: rgba(255, 107, 94, 0.5);
+}
+.booklet-photo.image-missing .booklet-photo-img { display: none; }
+.booklet-photo.image-missing .booklet-photo-fallback { display: flex; }
+.booklet-caption {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 1.4rem 0.7rem 0.55rem;
+  font-size: 0.78rem;
+  /* Deliberately NOT var(--paper) — this sits on its own dark scrim
+     regardless of the page's light/dark theme, so it always needs light
+     text, not whatever color the page body text happens to be. */
+  color: #fff6ef;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  background: linear-gradient(0deg, rgba(28,20,32,0.9) 40%, transparent);
+}
+
+/* ============================================================================
+   OUTRO
+   ============================================================================ */
+.outro {
+  text-align: center;
+  padding: clamp(3.5rem, 8vw, 5rem) 1.25rem;
+  border-top: 1px solid var(--line);
+}
+.outro-kicker {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  font-size: 0.72rem;
+  color: var(--text-dimmer);
+  margin-bottom: 1rem;
+}
+.outro-signature {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.3rem, 3vw, 1.7rem);
+  color: var(--paper);
+  margin-bottom: 0.5rem;
+}
+.outro-sub { color: var(--text-dim); font-size: 0.95rem; }
+
+/* ============================================================================
+   MINI PLAYER — persistent bottom bar, the signature element
+   ============================================================================ */
+.mini-player {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  height: var(--player-height);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-top: 1px solid var(--line);
+}
+
+.mini-player-scrub {
+  position: relative;
+  height: 3px;
+  width: 100%;
+  background: rgba(42, 26, 18, 0.1);
+}
+.mini-player-scrub-fill {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 0%;
+  background: var(--gradient-warm);
+  transition: width 0.1s linear;
+}
+
+.mini-player-row {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  height: calc(100% - 3px);
+  padding: 0 1rem;
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.mini-player-art {
+  position: relative;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--gradient-warm);
+  overflow: hidden;
+}
+.mini-player-art-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.5), transparent 60%);
+}
+
+.mini-player-info {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+.mini-player-track {
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--tangerine);
+  margin-bottom: 0.15rem;
+}
+.mini-player-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--paper);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mini-player-btn {
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: rgba(42, 26, 18, 0.06);
+  color: var(--paper);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.mini-player-btn:hover { transform: scale(1.06); background: rgba(42, 26, 18, 0.1); }
+.mini-player-play-icon { font-size: 0.85rem; }
+
+.mini-player-bars { display: none; align-items: flex-end; gap: 3px; height: 16px; }
+.mini-player-bars span {
+  width: 3px;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--tangerine);
+  animation: micPulse 0.9s ease-in-out infinite;
+  transform-origin: bottom;
+}
+.mini-player-bars span:nth-child(2) { animation-delay: 0.2s; }
+.mini-player-bars span:nth-child(3) { animation-delay: 0.4s; }
+
+.mini-player-btn.playing .mini-player-play-icon { display: none; }
+.mini-player-btn.playing .mini-player-bars { display: flex; }
+
+/* ============================================================================
+   Responsive
+   ============================================================================ */
+@media (max-width: 480px) {
+  body { font-size: 16px; }
+  .cover-content { margin-top: min(200px, 52vw); }
+}
+
+@media (min-width: 1440px) {
+  body { font-size: 18px; }
+}
+
+/* ============================================================================
+   Reduced motion
+   ============================================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html { scroll-behavior: smooth; }
+
+.mini-player-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.mini-player-btn:disabled:hover { transform: none; background: rgba(42, 26, 18, 0.06); }
+
+/* ============================================================================
+   AMBIENT CONFETTI — drifts continuously behind everything, low density so
+   it reads as festive texture against the white background rather than
+   competing with the content on top of it.
+   ============================================================================ */
+.confetti-ambient {
+  position: fixed;
+  inset: 0;
+  /* z-index: 0, not a positive value — this needs to paint at the same
+     "layer" as the rest of the page's normal-flow content so DOM order
+     (this sits first, before .cover/main) puts it behind everything, not
+     a positive z-index which would float it above all page content
+     regardless of source order. */
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.confetti-ambient-piece {
+  position: absolute;
+  top: -8vh;
+  opacity: 0;
+  border-radius: 2px;
+  animation-name: confettiDrift;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes confettiDrift {
+  0%   { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  8%   { opacity: 0.85; }
+  50%  { transform: translate(var(--drift-x, 30px), 60vh) rotate(180deg); }
+  92%  { opacity: 0.7; }
+  100% { transform: translate(calc(var(--drift-x, 30px) * -1), 118vh) rotate(360deg); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confetti-ambient { display: none; }
+}
