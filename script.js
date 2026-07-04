@@ -12,9 +12,12 @@
    ============================================================================ */
 
 const CONFIG = {
+  // Her name — shown on the cover and worked into the personal message.
+  HER_NAME: 'Nina',
+
   // Personal message — a few short lines, kept intimate rather than long.
   MESSAGE_LINES: [
-    "Today, of all days, I wish I could be the one hugging you right now.",
+    "Nina, today of all days, I wish I could be the one hugging you right now.",
     "Since I can't, I've spent the day thinking about how to make tonight feel like I am anyway.",
     "You've spent thirty years becoming exactly who you are, and I love every version of you along the way.",
     "So here's something small, from far away."
@@ -131,6 +134,9 @@ const CONFIG = {
 
   /* ---------------------------- Content ---------------------------- */
   function renderContent() {
+    const coverTitle = document.getElementById('cover-title');
+    if (coverTitle) coverTitle.innerHTML = `Happy 30th Birthday, ${escapeHTML(CONFIG.HER_NAME)} &#10084;&#65039;`;
+
     const message = document.getElementById('message-text');
     if (message) message.innerHTML = CONFIG.MESSAGE_LINES.map(escapeHTML).join('<br><br>');
 
@@ -169,6 +175,23 @@ const CONFIG = {
       });
     }, { threshold: 0, rootMargin: '0px 0px -75% 0px' });
     beats.forEach((el) => observer.observe(el));
+
+    // Safety net: when the trailing sections are short, the page can run
+    // out of scroll room before their top edge ever reaches that top-25%
+    // trigger zone — which left the last couple of sections stuck at
+    // opacity:0 forever, looking like they'd been deleted. Once she's
+    // scrolled essentially to the bottom of the page, just reveal
+    // whatever's left.
+    function revealIfAtBottom() {
+      const doc = document.documentElement;
+      const maxScroll = doc.scrollHeight - window.innerHeight;
+      if (maxScroll <= 0 || window.scrollY >= maxScroll - 60) {
+        beats.forEach((el) => el.classList.add('in-view'));
+      }
+    }
+    window.addEventListener('scroll', revealIfAtBottom, { passive: true });
+    window.addEventListener('resize', revealIfAtBottom);
+    revealIfAtBottom();
   }
 
   /* ---------------------------- Ambient confetti ---------------------------- */
