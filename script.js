@@ -20,19 +20,20 @@ const CONFIG = {
 
   // Personal message — a few short lines, kept intimate rather than long.
   MESSAGE_LINES: [
-    "Nina, today of all days, I wish I could be the one hugging you right now.",
-    "Since I can't, I've spent the day thinking about how to make tonight feel like I am anyway.",
-    "You've spent thirty years becoming exactly who you are, and I love every version of you along the way.",
-    "So here's something small, from far away."
+    "Today of all days, I wish I could be hugging you right now.",
+    "Since I can't, I've spent the day thinking about how to make tonight feel like I am, anyway.",
+    "You've spent thirty years becoming exactly who you are, and I love every version of you.",
+    "So here's something small, from far away lol 😉."
   ],
 
   // The tease — builds anticipation without spoiling anything. She already
   // knows where dinner is; this is about what comes after.
   TEASE_LINES: [
-    "I know you already know where dinner is tonight.",
-    "But there's one more surprise waiting for you.",
-    "At the end of your meal — don't leave just yet.",
-    "Save a little room for dessert."
+  "Tonight is all about celebrating you.",
+  "I know you already know where you're having dinner.",
+  "But there's one little surprise waiting for you...",
+  "Enjoy every moment.",
+  "And don't forget to save room for dessert. ❤️"
   ],
 
   // The surprise stays unrevealed on purpose — she won't know what this
@@ -72,6 +73,7 @@ const CONFIG = {
     setupBackgroundMusic();
     setupAmbientConfetti();
     setupScreenReveals();
+    setupMessageReveal();
   }
 
   /* ---------------------------- Candles / wish ---------------------------- */
@@ -149,8 +151,12 @@ const CONFIG = {
     const coverTagline = document.getElementById('cover-tagline');
     if (coverTagline) coverTagline.textContent = CONFIG.COVER_TAGLINE;
 
-    const message = document.getElementById('message-text');
-    if (message) message.innerHTML = CONFIG.MESSAGE_LINES.map(escapeHTML).join('<br><br>');
+    const messageWrap = document.getElementById('message-lines');
+    if (messageWrap) {
+      messageWrap.innerHTML = CONFIG.MESSAGE_LINES
+        .map((line) => `<p class="message-line">${escapeHTML(line)}</p>`)
+        .join('');
+    }
 
     const tease = document.getElementById('tease-text');
     if (tease) tease.innerHTML = CONFIG.TEASE_LINES.map(escapeHTML).join('<br><br>');
@@ -200,6 +206,58 @@ const CONFIG = {
       if (maxScroll <= 0 || window.scrollY >= maxScroll - 60) {
         beats.forEach((el) => el.classList.add('in-view'));
       }
+    }
+    window.addEventListener('scroll', revealIfAtBottom, { passive: true });
+    window.addEventListener('resize', revealIfAtBottom);
+    revealIfAtBottom();
+  }
+
+  /* ---------------------------- Personal message: one sentence at a time ---------------------------- */
+  // Instead of the whole message appearing as one paragraph, each sentence
+  // fades in on its own, a couple seconds apart, once the section scrolls
+  // into view.
+  function setupMessageReveal() {
+    const section = document.getElementById('section-message');
+    const lines = document.querySelectorAll('#message-lines .message-line');
+    if (!section || !lines.length) return;
+
+    const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let started = false;
+
+    function revealLines() {
+      if (started) return;
+      started = true;
+      if (reduceMotion) {
+        lines.forEach((el) => el.classList.add('visible'));
+        return;
+      }
+      lines.forEach((el, i) => {
+        setTimeout(() => el.classList.add('visible'), i * 2500);
+      });
+    }
+
+    if (!('IntersectionObserver' in window)) {
+      revealLines();
+      return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          revealLines();
+          observer.unobserve(section);
+        }
+      });
+    }, { threshold: 0, rootMargin: '0px 0px -75% 0px' });
+    observer.observe(section);
+
+    // Same safety net as setupScreenReveals: if she scrolls straight to the
+    // bottom of the page, make sure these still show up rather than never
+    // triggering.
+    function revealIfAtBottom() {
+      const doc = document.documentElement;
+      const maxScroll = doc.scrollHeight - window.innerHeight;
+      if (maxScroll <= 0 || window.scrollY >= maxScroll - 60) revealLines();
     }
     window.addEventListener('scroll', revealIfAtBottom, { passive: true });
     window.addEventListener('resize', revealIfAtBottom);

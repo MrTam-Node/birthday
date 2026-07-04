@@ -844,6 +844,29 @@ html { scroll-behavior: smooth; }
     rgba(42, 26, 18, 0.02);
 }
 
+/* Personal message — sentences revealed one at a time by JS, rather than
+   appearing as one block. */
+.message-lines {
+  max-width: 36ch;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+.message-line {
+  font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+  line-height: 1.65;
+  color: var(--text-dim);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+.message-line.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .track, .outro { transition-duration: 0.01ms !important; }
+  .message-line { transition-duration: 0.01ms !important; }
 }
