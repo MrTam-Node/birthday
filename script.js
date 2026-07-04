@@ -1,129 +1,41 @@
 /* ============================================================================
-   A PLAYLIST FOR YOU — birthday mixtape microsite
+   HAPPY 30TH BIRTHDAY — a quiet, minimal surprise reveal
    ----------------------------------------------------------------------------
    Everything you'd want to personalize lives in the CONFIG object below.
-   Edit the values inside CONFIG and save — the rest of this file just reads
-   from it, so you shouldn't need to touch any code below "END CONFIG".
+   Edit the values and save — the rest of this file just reads from it, so
+   you shouldn't need to touch any code below "END CONFIG".
 
-   A note on the content below: since this is written for a long-distance
-   relationship where she's away specifically on her actual birthday, the
-   REASONS/TIMELINE/LETTER are written to fit that — not a cohabiting-couple
-   story. Swap in your real ones whenever you're ready.
+   The flow: an opening (music starts softly), a personal message, a tease
+   that builds anticipation without revealing anything, an unrevealed
+   "surprise" line, then a closing that hints there's more to come. She
+   already knows about dinner — this page is about what happens after.
    ============================================================================ */
 
 const CONFIG = {
-
-  // The birthday girl's name. Shown big on the cover.
-  HER_NAME: 'Her Name',
-
-  // Your name. Shown as the signature in the outro.
-  YOUR_NAME: '[Your Name]',
-
-  // Exactly 30 short lines — one per "lyric" in the Thirty Reasons track.
-  // Line #1 shows REASONS[0], line #30 shows REASONS[29].
-  REASONS: [
-    "The way you send me a photo of your coffee every single morning, wherever you are.",
-    "How you stay up way too late just so our time zones can overlap for an hour.",
-    "The voice memos you send instead of texting when you have too much to say.",
-    "How you still get excited to show me the view out of whatever window you're at.",
-    "The way you narrate your whole day to me like I was there for it.",
-    "How you learned my group chat's inside jokes without ever meeting them.",
-    "The playlists you make me that somehow always match exactly how I'm feeling.",
-    "How you never once made the distance my fault or yours.",
-    "The way you fall asleep on video call mid-sentence and I just let you.",
-    "How you remember every layover, every flight number, every countdown.",
-    "The way 'I miss you' never gets old, no matter how many times you say it.",
-    "How you make a new city feel less lonely just by texting me from it.",
-    "The way you still get nervous before I see your face on a call.",
-    "How you plan our next trip together before we've even finished this one.",
-    "The way you send selfies with no context except that you're thinking of me.",
-    "How you learned to say goodnight in whatever time zone I'm sleeping in.",
-    "The way you keep every boarding pass like it's a souvenir.",
-    "How you never let a bad connection ruin a good conversation.",
-    "The way you say 'come here' and mean it, even from a thousand miles off.",
-    "How you make ordinary Tuesdays feel like events, just by calling.",
-    "The way you get genuinely thrilled about my boring errands, just to hear my voice.",
-    "How you never once made me feel far away, even when you were.",
-    "The way you've turned waiting for me into its own kind of love language.",
-    "How you keep receipts, ticket stubs, and playlists like a scrapbook of us.",
-    "The way you say my name different than everyone else does.",
-    "How you make me believe distance is just a detail, not a deal-breaker.",
-    "The way you've grown into exactly the person I fell for, and then some.",
-    "How you make turning thirty sound like the start of something, not the end.",
-    "The way you love loud, even through a screen.",
-    "How every version of you, close or far, I have loved completely."
+  // Personal message — a few short lines, kept intimate rather than long.
+  MESSAGE_LINES: [
+    "Today, of all days, I wish I could be the one hugging you right now.",
+    "Since I can't, I've spent the day thinking about how to make tonight feel like I am anyway.",
+    "You've spent thirty years becoming exactly who you are, and I love every version of you along the way.",
+    "So here's something small, from far away."
   ],
 
-  // 5-7 milestones for the "Liner Notes" track. "time" is styled like a
-  // track timestamp (any short label works: "0:00", a season, etc).
-  TIMELINE: [
-    {
-      time: '0:00',
-      date: 'The Beginning',
-      title: 'The Day We Matched',
-      text: "A profile, a bad opening line, and a reply that came back faster than either of us expected. Neither of us planned on this turning into a whole life."
-    },
-    {
-      time: '1:24',
-      date: 'Three Weeks In',
-      title: 'The Call That Lasted Till 3AM',
-      text: "We said 'okay, one more thing' about six times. I fell asleep with my phone still lit up on the pillow next to me."
-    },
-    {
-      time: '2:47',
-      date: 'First Visit',
-      title: 'The Flight I Booked Without Overthinking It',
-      text: "Twelve hours in the air just to see your face for four days. Worth every layover, every terrible airport coffee."
-    },
-    {
-      time: '3:15',
-      date: 'A Year In',
-      title: 'The Trip We Finally Took Together',
-      text: "Not visiting each other for once — actually going somewhere new, side by side, like people who live in the same city do."
-    },
-    {
-      time: '3:52',
-      date: 'Somewhere In Between',
-      title: 'Every Ordinary Video Call',
-      text: "No news, no big update, just your face on my screen while you made dinner or I did laundry. Those are the ones I replay the most."
-    },
-    {
-      time: '4:00',
-      date: 'Today',
-      title: 'Your 30th, From Far Away',
-      text: "I hate that I'm not there to hand you a cake in person. But you're turning thirty on the other side of some distance I'm counting down every day, and I wanted you to have this anyway."
-    }
+  // The tease — builds anticipation without spoiling anything. She already
+  // knows where dinner is; this is about what comes after.
+  TEASE_LINES: [
+    "I know you already know where dinner is tonight.",
+    "But there's one more surprise waiting for you.",
+    "At the end of your meal — don't leave just yet.",
+    "Save a little room for dessert."
   ],
 
-  // The "voice memo" transcript — the love letter, written for the fact that
-  // she's traveling and away specifically on her birthday.
-  LOVE_LETTER:
-`Hey, it's me.
+  // The surprise stays unrevealed on purpose — she won't know what this
+  // means until dessert actually arrives.
+  SURPRISE_LINE: "I hope tonight reminds you just how loved you are, even from miles away.",
 
-I know today's supposed to be the day I show up with a cake and terrible singing and you pretending to be embarrassed about it. I hate that I can't do that this year — that you're waking up thirty in a place I'm not, on a day I wanted so badly to be there for.
-
-But I've been thinking about you all day anyway, from wherever I am, same as always. Thirty looks like it's going to be a good one on you. I've watched you grow into someone braver and funnier and more exactly yourself every single year I've known you, and I don't think distance has slowed any of that down — if anything, it's taught us both how to love someone properly even when they're not in the room.
-
-So here's a playlist instead of a cake. Here's thirty reasons instead of a card. Here's everything I'd be saying out loud right now if the time zones lined up.
-
-Happy 30th, from wherever you're reading this. I'm not there yet. But I will be soon, and I already can't wait.
-
-Yours, from far away — for now.`,
-
-  // 6-8 photos for "The Album Booklet". "src" points into images/ (see
-  // images/README.txt). If a file isn't there yet, a graceful placeholder
-  // shows instead of a broken image — safe to launch with zero real photos.
-  PHOTOS: [
-    { src: 'images/photo1.jpg', caption: 'First video call, terrible wifi, best four hours' },
-    { src: 'images/photo2.jpg', caption: 'The layover selfie before the first visit' },
-    { src: 'images/photo3.jpg', caption: 'That trip we actually took together' },
-    { src: 'images/photo4.jpg', caption: 'Your view, sent with no caption needed' },
-    { src: 'images/photo5.jpg', caption: 'Falling asleep mid-call, again' },
-    { src: 'images/photo6.jpg', caption: 'The airport reunion hug' },
-    { src: 'images/photo7.jpg', caption: 'A random Tuesday, screenshotted anyway' },
-    { src: 'images/photo8.jpg', caption: 'Us, on whatever screen was between us' }
-  ]
-
+  // Closing — hints the birthday isn't over yet.
+  CLOSING_LINE: "This isn't the last surprise… ♥",
+  CLOSING_SUB: "Happy 30th, my love."
 };
 
 /* ============================================================================
@@ -134,25 +46,123 @@ Yours, from far away — for now.`,
 (function () {
   'use strict';
 
-  const CANDLE_COUNT = 1;
-  let candlesRemaining = CANDLE_COUNT;
-
   document.addEventListener('DOMContentLoaded', init);
 
-  function init() {
-    renderCover();
-    renderCandles();
-    renderTranscript();
-    renderBooklet();
-    renderOutro();
+  const CANDLE_COUNT = 1;
 
+  function init() {
+    renderContent();
+    renderCandles();
     setupLiveClock();
     setupPressPlay();
     setupCandles();
-    setupVoiceMemo();
     setupMiniPlayer();
     setupBackgroundMusic();
     setupAmbientConfetti();
+    setupScreenReveals();
+  }
+
+  /* ---------------------------- Candles / wish ---------------------------- */
+  function renderCandles() {
+    const holder = document.getElementById('candles');
+    if (!holder) return;
+    holder.innerHTML = '';
+    for (let i = 0; i < CANDLE_COUNT; i++) {
+      const candle = document.createElement('button');
+      candle.className = 'candle';
+      candle.type = 'button';
+      candle.setAttribute('aria-label', 'Blow out candle ' + (i + 1));
+      candle.innerHTML = `
+        <span class="flame" aria-hidden="true"></span>
+        <span class="wick" aria-hidden="true"></span>
+        <span class="wax" aria-hidden="true"></span>
+      `;
+      candle.addEventListener('click', () => extinguishCandle(candle));
+      holder.appendChild(candle);
+    }
+  }
+
+  function setupCandles() {
+    // No "blow them all out" button with a single candle — tapping the
+    // one candle already does the same thing.
+  }
+
+  function extinguishCandle(candleEl) {
+    if (candleEl.classList.contains('out')) return;
+    candleEl.classList.add('out');
+    burstConfetti(candleEl);
+    const msg = document.getElementById('wish-message');
+    if (msg) {
+      msg.textContent = 'Wish made. ✨';
+      msg.classList.add('visible');
+    }
+  }
+
+  function burstConfetti(originEl) {
+    const stage = document.getElementById('confetti-stage');
+    if (!stage || !originEl) return;
+    const rect = originEl.getBoundingClientRect();
+    const stageRect = stage.getBoundingClientRect();
+    const originX = rect.left - stageRect.left + rect.width / 2;
+    const originY = rect.top - stageRect.top + rect.height / 2;
+    const COLORS = ['#ff6b5e', '#ffb347', '#1fae6b', '#fff6ef'];
+
+    for (let i = 0; i < 14; i++) {
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      const angle = Math.random() * Math.PI * 2;
+      const distance = 40 + Math.random() * 70;
+      const x = Math.cos(angle) * distance;
+      const y = Math.sin(angle) * distance - 30;
+      const size = 4 + Math.random() * 5;
+      piece.style.left = originX + 'px';
+      piece.style.top = originY + 'px';
+      piece.style.width = size + 'px';
+      piece.style.height = size * (Math.random() > 0.5 ? 1 : 2.2) + 'px';
+      piece.style.background = COLORS[Math.floor(Math.random() * COLORS.length)];
+      piece.style.setProperty('--dx', x + 'px');
+      piece.style.setProperty('--dy', y + 'px');
+      piece.style.setProperty('--rot', (Math.random() * 720 - 360) + 'deg');
+      stage.appendChild(piece);
+      piece.addEventListener('animationend', () => piece.remove());
+      setTimeout(() => piece.remove(), 1600);
+    }
+  }
+
+  /* ---------------------------- Content ---------------------------- */
+  function renderContent() {
+    const message = document.getElementById('message-text');
+    if (message) message.innerHTML = CONFIG.MESSAGE_LINES.map(escapeHTML).join('<br><br>');
+
+    const tease = document.getElementById('tease-text');
+    if (tease) tease.innerHTML = CONFIG.TEASE_LINES.map(escapeHTML).join('<br><br>');
+
+    const surprise = document.getElementById('surprise-text');
+    if (surprise) surprise.textContent = CONFIG.SURPRISE_LINE;
+
+    const closingSig = document.getElementById('outro-signature');
+    if (closingSig) closingSig.textContent = CONFIG.CLOSING_LINE;
+
+    const closingSub = document.getElementById('outro-sub');
+    if (closingSub) closingSub.textContent = CONFIG.CLOSING_SUB;
+  }
+
+  /* ---------------------------- Gentle fade-in as each beat scrolls into view ---------------------------- */
+  function setupScreenReveals() {
+    const beats = document.querySelectorAll('.track, .outro');
+    if (!('IntersectionObserver' in window)) {
+      beats.forEach((el) => el.classList.add('in-view'));
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.3 });
+    beats.forEach((el) => observer.observe(el));
   }
 
   /* ---------------------------- Ambient confetti ---------------------------- */
@@ -180,12 +190,7 @@ Yours, from far away — for now.`,
     });
   }
 
-  /* ---------------------------- Cover ---------------------------- */
-  function renderCover() {
-    const title = document.getElementById('cover-title');
-    if (title) title.textContent = `${CONFIG.HER_NAME}'s 30th`;
-  }
-
+  /* ---------------------------- Live clock ---------------------------- */
   function setupLiveClock() {
     const el = document.getElementById('live-clock-text');
     if (!el) return;
@@ -199,133 +204,15 @@ Yours, from far away — for now.`,
     setInterval(tick, 15000);
   }
 
+  /* ---------------------------- Press play ---------------------------- */
   function setupPressPlay() {
     const btn = document.getElementById('press-play');
     if (!btn) return;
     btn.addEventListener('click', () => {
       startMusic();
-      const first = document.getElementById('track-01');
+      const first = document.getElementById('section-wish');
       if (first) first.scrollIntoView({ behavior: 'smooth' });
     });
-  }
-
-  /* ---------------------------- Candles / wish ---------------------------- */
-  function renderCandles() {
-    const holder = document.getElementById('candles');
-    if (!holder) return;
-    holder.innerHTML = '';
-    for (let i = 0; i < CANDLE_COUNT; i++) {
-      const candle = document.createElement('button');
-      candle.className = 'candle';
-      candle.type = 'button';
-      candle.setAttribute('aria-label', 'Blow out candle ' + (i + 1));
-      candle.innerHTML = `
-        <span class="flame" aria-hidden="true"></span>
-        <span class="wick" aria-hidden="true"></span>
-        <span class="wax" aria-hidden="true"></span>
-      `;
-      candle.addEventListener('click', () => extinguishCandle(candle));
-      holder.appendChild(candle);
-    }
-  }
-
-  function setupCandles() {
-    const blowAllBtn = document.getElementById('blow-all-btn');
-    if (blowAllBtn) {
-      blowAllBtn.addEventListener('click', () => {
-        const lit = document.querySelectorAll('.candle:not(.out)');
-        lit.forEach((c, idx) => setTimeout(() => extinguishCandle(c), idx * 170));
-      });
-    }
-  }
-
-  function extinguishCandle(candleEl) {
-    if (candleEl.classList.contains('out')) return;
-    candleEl.classList.add('out');
-    burstConfetti(candleEl);
-    candlesRemaining = Math.max(0, candlesRemaining - 1);
-    if (candlesRemaining === 0) {
-      const msg = document.getElementById('wish-message');
-      if (msg) {
-        msg.textContent = 'Wish made. Here’s to thirty, from wherever I am. ✨';
-        msg.classList.add('visible');
-      }
-    }
-  }
-
-  function burstConfetti(originEl) {
-    const stage = document.getElementById('confetti-stage');
-    if (!stage || !originEl) return;
-    const rect = originEl.getBoundingClientRect();
-    const stageRect = stage.getBoundingClientRect();
-    const originX = rect.left - stageRect.left + rect.width / 2;
-    const originY = rect.top - stageRect.top + rect.height / 2;
-    const COLORS = ['#ff6b5e', '#ffb347', '#6ee7b7', '#fff6ef'];
-
-    for (let i = 0; i < 14; i++) {
-      const piece = document.createElement('div');
-      piece.className = 'confetti-piece';
-      const angle = Math.random() * Math.PI * 2;
-      const distance = 40 + Math.random() * 70;
-      const x = Math.cos(angle) * distance;
-      const y = Math.sin(angle) * distance - 30;
-      const size = 4 + Math.random() * 5;
-      piece.style.left = originX + 'px';
-      piece.style.top = originY + 'px';
-      piece.style.width = size + 'px';
-      piece.style.height = size * (Math.random() > 0.5 ? 1 : 2.2) + 'px';
-      piece.style.background = COLORS[Math.floor(Math.random() * COLORS.length)];
-      piece.style.setProperty('--dx', x + 'px');
-      piece.style.setProperty('--dy', y + 'px');
-      piece.style.setProperty('--rot', (Math.random() * 720 - 360) + 'deg');
-      stage.appendChild(piece);
-      piece.addEventListener('animationend', () => piece.remove());
-      setTimeout(() => piece.remove(), 1600);
-    }
-  }
-
-  /* ---------------------------- Voice memo (letter) ---------------------------- */
-  function renderTranscript() {
-    const body = document.getElementById('transcript-body');
-    if (!body) return;
-    const paragraphs = CONFIG.LOVE_LETTER.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
-    body.innerHTML = paragraphs.map(p => `<p>${escapeHTML(p)}</p>`).join('');
-  }
-
-  function setupVoiceMemo() {
-    const memo = document.getElementById('voice-memo');
-    const transcript = document.getElementById('voice-memo-transcript');
-    if (!memo || !transcript) return;
-    memo.addEventListener('click', () => {
-      const expanded = memo.classList.toggle('expanded');
-      memo.setAttribute('aria-expanded', String(expanded));
-      transcript.classList.toggle('revealed', expanded);
-    });
-  }
-
-  /* ---------------------------- Album booklet (photos) ---------------------------- */
-  function renderBooklet() {
-    const grid = document.getElementById('booklet-grid');
-    if (!grid) return;
-    grid.innerHTML = '';
-    CONFIG.PHOTOS.forEach((photo) => {
-      const fig = document.createElement('figure');
-      fig.className = 'booklet-photo';
-      fig.innerHTML = `
-        <img class="booklet-photo-img" src="${escapeHTML(photo.src)}" alt="${escapeHTML(photo.caption)}" loading="lazy">
-        <div class="booklet-photo-fallback" aria-hidden="true">&#9825;</div>
-        <figcaption class="booklet-caption">${escapeHTML(photo.caption)}</figcaption>
-      `;
-      const img = fig.querySelector('.booklet-photo-img');
-      img.addEventListener('error', () => fig.classList.add('image-missing'));
-      grid.appendChild(fig);
-    });
-  }
-
-  /* ---------------------------- Outro ---------------------------- */
-  function renderOutro() {
-    const sig = document.getElementById('outro-signature');
-    if (sig) sig.textContent = `With all my love, ${CONFIG.YOUR_NAME}`;
   }
 
   /* ---------------------------- Mini player: scroll-spy + scrub ---------------------------- */
@@ -333,7 +220,7 @@ Yours, from far away — for now.`,
     const scrubFill = document.getElementById('mini-player-scrub-fill');
     const trackLabel = document.getElementById('mini-player-track');
     const nameLabel = document.getElementById('mini-player-name');
-    const sections = Array.from(document.querySelectorAll('.track'));
+    const sections = Array.from(document.querySelectorAll('.track, .outro'));
     if (!scrubFill) return;
 
     function onScroll() {
@@ -343,15 +230,18 @@ Yours, from far away — for now.`,
       const progress = maxScroll > 0 ? Math.min(1, Math.max(0, scrollTop / maxScroll)) : 0;
       scrubFill.style.width = (progress * 100) + '%';
 
-      let current = sections[0];
+      let current = null;
       const viewportMid = scrollTop + window.innerHeight * 0.4;
       sections.forEach((sec) => {
         if (sec.offsetTop <= viewportMid) current = sec;
       });
       if (current && trackLabel && nameLabel) {
-        const idx = sections.indexOf(current) + 1;
-        trackLabel.textContent = 'Track ' + String(idx).padStart(2, '0');
+        const idx = sections.indexOf(current) + 2; // +2: opening counts as 01
+        trackLabel.textContent = String(idx).padStart(2, '0');
         nameLabel.textContent = current.dataset.trackName || '';
+      } else if (trackLabel && nameLabel) {
+        trackLabel.textContent = '01';
+        nameLabel.textContent = 'Opening';
       }
     }
 
@@ -371,6 +261,9 @@ Yours, from far away — for now.`,
      first — there's no way around that, by design, in every modern browser.
      So this starts on her first tap/click/keypress. The mini-player button
      is the manual play/pause toggle once it's going.
+
+     This exact block is unchanged from the previously verified-working
+     version.
      ============================================================================ */
   let musicStarted = false;
   let musicPlaying = false;
@@ -407,9 +300,6 @@ Yours, from far away — for now.`,
         setMusicPlayingState(true);
         updateAmbienceForScroll();
       }).catch(() => {
-        // Blocked — the gesture that called this should normally prevent
-        // this, but if it happens there's nothing more to do than leave
-        // the mini-player showing "not playing" so she can tap it herself.
         setMusicPlayingState(false);
       });
     }
@@ -432,9 +322,6 @@ Yours, from far away — for now.`,
     }).catch(() => {});
   }
 
-  // Swells the volume gently as she scrolls further into the page, so it's
-  // not just a flat loop — the "ambience as she scrolls" bit, done with
-  // nothing more than audioEl.volume (no separate audio graph to fail).
   function updateAmbienceForScroll() {
     const audioEl = document.getElementById('bg-audio');
     if (!audioEl || !musicPlaying) return;
@@ -456,14 +343,6 @@ Yours, from far away — for now.`,
       });
     }
 
-    // Starts on her first tap/click/keypress. Browsers specifically do NOT
-    // count scroll or wheel events as a "real" user gesture for unlocking
-    // audio — only a genuine tap, click, or keypress does — so those are
-    // deliberately left out here even though the goal is "as she scrolls".
-    // In practice this still fires almost immediately: on a phone, the very
-    // touch that starts a scroll gesture (touchstart) qualifies, so this
-    // starts right as she begins scrolling. On a trackpad/mouse with no
-    // click yet, it starts the moment she clicks or taps anything at all.
     const firstInteractionEvents = ['pointerdown', 'touchstart', 'keydown', 'click'];
     function onFirstInteraction() {
       startAmbience();

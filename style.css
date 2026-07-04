@@ -795,3 +795,55 @@ html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) {
   #confetti-canvas { display: none; }
 }
+
+/* ============================================================================
+   QUIET REVEAL BEATS — message / tease / surprise text, and the gentle
+   scroll-triggered fade for each beat (opening/cover is excluded, it's
+   already visible immediately).
+   ============================================================================ */
+.track, .outro {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 1s ease, transform 1s ease;
+}
+.track.in-view, .outro.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.beat-kicker {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--tangerine);
+  margin-bottom: 1.2rem;
+}
+
+.beat-text {
+  font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+  line-height: 1.65;
+  color: var(--text-dim);
+  max-width: 36ch;
+  margin: 0 auto;
+}
+
+.beat-text-emphasis {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1.3rem, 3.2vw, 1.7rem);
+  color: var(--paper);
+  max-width: 26ch;
+}
+
+.track-surprise {
+  background:
+    radial-gradient(ellipse at 50% 40%, rgba(255, 179, 71, 0.1), transparent 60%),
+    rgba(42, 26, 18, 0.02);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track, .outro { transition-duration: 0.01ms !important; }
+}
